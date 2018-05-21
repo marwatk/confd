@@ -1,0 +1,8 @@
+title: Confd
+description: Manage local application configuration files using templates and data from etcd
+google_analytics: 
+show_downloads: true
+theme: jekyll-theme-midnight
+
+gems:
+  - jekyll-mentions
