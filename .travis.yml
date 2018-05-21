@@ -55,7 +55,7 @@ before_deploy:
     export GOARCH=amd64
     export CGO_ENABLED=0
 
-    OUT_FILE="$GOPATH/bin/clconf-$PLATFORM$EXTENSION"
+    OUT_FILE="$GOPATH/bin/confd-$PLATFORM$EXTENSION"
     echo "Creating $OUT_FILE ($TRAVIS_TAG)"
     go build -ldflags "-X github.com/kelseyhightower/confd/main.Version=$TRAVIS_TAG" -o $OUT_FILE
   done
