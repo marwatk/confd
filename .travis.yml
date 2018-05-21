@@ -1,6 +1,6 @@
 language: go
 go:
-  - 1.x
+  - '1.10'
   - tip
 # this allows forked projects to be buildt by travis before submitting pull reqs...
 go_import_path: github.com/kelseyhightower/confd
@@ -75,5 +75,5 @@ deploy:
   - $GOPATH/bin/confd-windows.exe
   skip_cleanup: true
   on:
-    condition: $TRAVIS_GO_VERSION = "1.x" 
+    condition: $TRAVIS_GO_VERSION = "1.10" 
     tags: true
