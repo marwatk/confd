@@ -1,54 +1,49 @@
 language: go
 go:
-  - '1.10'
-  - tip
-# this allows forked projects to be buildt by travis before submitting pull reqs...
+- '1.10'
+- tip
 go_import_path: github.com/kelseyhightower/confd
 env:
-  - VAULT_ADDR='http://127.0.0.1:8200' CONSUL_VERSION=0.9.3 ETCD_VERSION=3.3.1 DYNAMODB_VERSION=2017-02-16 VAULT_VERSION=0.8.1 ZOOKEEPER_VERSION=3.4.10 RANCHER_VERSION=0.6.0
+- VAULT_ADDR='http://127.0.0.1:8200' CONSUL_VERSION=0.9.3 ETCD_VERSION=3.3.1 DYNAMODB_VERSION=2017-02-16
+  VAULT_VERSION=0.8.1 ZOOKEEPER_VERSION=3.4.10 RANCHER_VERSION=0.6.0
 services:
-  - redis
+- redis
 before_install:
-  # install consul
-  - wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
-  - unzip consul_${CONSUL_VERSION}_linux_amd64.zip
-  - sudo mv consul /bin/
-  - consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -bind 127.0.0.1 &
-  # install etcd
-  - wget https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
-  - tar xzf etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
-  - sudo mv etcd-v${ETCD_VERSION}-linux-amd64/etcd /bin/
-  - sudo mv etcd-v${ETCD_VERSION}-linux-amd64/etcdctl /bin/
-  - unset ETCD_VERSION
-  - etcd &
-  # install DynamoDB
-  - sudo pip install awscli
-  - mkdir /tmp/dynamodb
-  - wget -O - https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_${DYNAMODB_VERSION}.tar.gz | tar xz --directory /tmp/dynamodb
-  - java -Djava.library.path=/tmp/dynamodb/DynamoDBLocal_lib -jar /tmp/dynamodb/DynamoDBLocal.jar -inMemory &
-  # Install rancher metadata
-  - wget https://github.com/rancher/rancher-metadata/releases/download/v${RANCHER_VERSION}/rancher-metadata.tar.gz
-  - mkdir -p ./rancher-metadata
-  - tar xzf rancher-metadata.tar.gz --strip-components=1 -C ./rancher-metadata
-  - sudo mv ./rancher-metadata/bin/rancher-metadata /bin/
-  # Install vault
-  - wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
-  - unzip vault_${VAULT_VERSION}_linux_amd64.zip
-  - sudo mv vault /bin/
-  - vault server -dev &
-  # Install zookeeper
-  - wget http://www.eu.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
-  - tar xzf zookeeper-${ZOOKEEPER_VERSION}.tar.gz
-  - mkdir /tmp/zookeeper && cp integration/zookeeper/zoo.cfg zookeeper-${ZOOKEEPER_VERSION}/conf/zoo.cfg
-  - zookeeper-${ZOOKEEPER_VERSION}/bin/zkServer.sh start
-  # Run AWS SSM mocking server
-  - go run ./integration/ssm/main.go &
+- wget https://releases.hashicorp.com/consul/${CONSUL_VERSION}/consul_${CONSUL_VERSION}_linux_amd64.zip
+- unzip consul_${CONSUL_VERSION}_linux_amd64.zip
+- sudo mv consul /bin/
+- consul agent -server -bootstrap-expect 1 -data-dir /tmp/consul -bind 127.0.0.1 &
+- wget https://github.com/coreos/etcd/releases/download/v${ETCD_VERSION}/etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
+- tar xzf etcd-v${ETCD_VERSION}-linux-amd64.tar.gz
+- sudo mv etcd-v${ETCD_VERSION}-linux-amd64/etcd /bin/
+- sudo mv etcd-v${ETCD_VERSION}-linux-amd64/etcdctl /bin/
+- unset ETCD_VERSION
+- etcd &
+- sudo pip install awscli
+- mkdir /tmp/dynamodb
+- wget -O - https://s3-us-west-2.amazonaws.com/dynamodb-local/dynamodb_local_${DYNAMODB_VERSION}.tar.gz
+  | tar xz --directory /tmp/dynamodb
+- java -Djava.library.path=/tmp/dynamodb/DynamoDBLocal_lib -jar /tmp/dynamodb/DynamoDBLocal.jar
+  -inMemory &
+- wget https://github.com/rancher/rancher-metadata/releases/download/v${RANCHER_VERSION}/rancher-metadata.tar.gz
+- mkdir -p ./rancher-metadata
+- tar xzf rancher-metadata.tar.gz --strip-components=1 -C ./rancher-metadata
+- sudo mv ./rancher-metadata/bin/rancher-metadata /bin/
+- wget https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip
+- unzip vault_${VAULT_VERSION}_linux_amd64.zip
+- sudo mv vault /bin/
+- vault server -dev &
+- wget http://www.eu.apache.org/dist/zookeeper/zookeeper-${ZOOKEEPER_VERSION}/zookeeper-${ZOOKEEPER_VERSION}.tar.gz
+- tar xzf zookeeper-${ZOOKEEPER_VERSION}.tar.gz
+- mkdir /tmp/zookeeper && cp integration/zookeeper/zoo.cfg zookeeper-${ZOOKEEPER_VERSION}/conf/zoo.cfg
+- zookeeper-${ZOOKEEPER_VERSION}/bin/zkServer.sh start
+- go run ./integration/ssm/main.go &
 install:
-  - make build
-  - sudo make install
+- make build
+- sudo make install
 script:
-  - make test
-  - make integration
+- make test
+- make integration
 before_deploy:
 - |
   for PLATFORM in windows linux darwin; do
@@ -67,13 +62,14 @@ before_deploy:
   ls -lrt $GOPATH/bin
 deploy:
   provider: releases
-  api_key:
-    secure: FgLzkb4joN3Wt7xfApBiPHFvpXp7LpxdJYjzkxMwLafvNmF5Gu1yVzaP5Tx/X0Jf31EZTvIVHX92xpNmtUFCbHXcTZ1NAuDioODsQ5zp4OaX3QhY+GrqK6jwGwmeS715PDm914dp7R785ojPGgxW+5CY+yFi2xmMaF4ChpgTOwG8dFS8RiK7kScRWvwfPW5E91XiHXCcZsLEDI7/rG6UF9K9QpLvSN2KmI59MaFDOMiPNQTo4gGD0/ProYWKQ5jUHCrNpMaj9q/GWsQwLnh9Xbxo/X7c5EDJTmVvqf61iWGSOgsWncPMkL05WQNRFLVL257/ORCHp+J6lJbZ23aNoN+kUfc+H66jG/yEeoUkJC7N4ezHTAW/JM8fNhoauau8OpnNfqHbHPsBn0XLCdSkOHSsb/jh1Wyk7rRP39fuQFNBUWiAvHPCVd4P0gybzCl237mQyH5QJvsFxwfAvD7GYugeybHeQb3+50/YPBa03+nZIL+b/UT52dvvBDa6Kz2lbOieiFH//U6wRU9hW8yZayUjj1WUBwyKJ/cBVMWGNYqMn8p3FAHNYOtwxQ4x+w/T/22ZBt4D0mqIprk9MxEV3I+InrJYH1JRuzKETmvz22/reuey0sYCSCD8f3gGbwoebUVSFxroTHdqHcBB2l4RAV39/MfbdGLDlskE+dF2xwE=
+  # travis encrypt -r pastdev/confd <YOUR_API_KEY> --add deploy.api-key
+  api-key:
+    secure: ODPCQhHMrf57l5I/B5xmeGQdhQc51Csv9Ap9NZfZcquwELxN49wZenkA9KezJXLBn5/4SLbBkIooin5xgLF2xTSNtQlGcvWdE0dMBGOxJTTG/chqQqJORSrqIXXEwmry0Rr7tHyOCYwexdyhFtJWzutupU2KgY0nJJ++HeDHiauFuREPnqzxdo+fCbeOyXezbBJcPHwoJmT/Q5orFWJGqVZPr67+aG7Rp70o65PNOXiDuMPJaosOeKR/XI82AdA0mj+6bnNox4900cOlApJGP7NeC/vuRE10Wku9u5u8ZhbG4Cr9DZwLu8WjwMFsmOxh1ZKKh2p4owysTAk5KSdw2L+Q0N4O2GcKL/DGiTA7p4+e7MZITX3uTdJ1vYIuISdTxsNdFyy23LX/cJ4dHhUD/MbiEIbS5l9PhMa7kNUD3bpz+bTYxBRXt9xYelgOjE4Zp4yGSnUdpFJtRbQF0s88tQdF1gf3NfKs7VceCgBRW4sa5PYbtl38oz+1OxK1DB4Q5HsXjEHR+xrYuxLRFPWTms4M4SRds0wI/YlF1xhuLyy1sZ2SF8tqpNbn8j2UhY9NR8ztYl8twJpJKkrwsDqZ3AeKHD6FgcZFJ0kZsTeXgNNygD759nRxws5+ml6IwTjSn6SIIHZFiT7tz9iXOmTUiBXWvrtbCYHFJBF7V5QBJ7Q=
   file:
-  - $GOPATH/bin/confd-linux
-  - $GOPATH/bin/confd-darwin
-  - $GOPATH/bin/confd-windows.exe
+  - "$GOPATH/bin/confd-linux"
+  - "$GOPATH/bin/confd-darwin"
+  - "$GOPATH/bin/confd-windows.exe"
   skip_cleanup: true
   on:
-    condition: $TRAVIS_GO_VERSION = "1.10" 
+    condition: $TRAVIS_GO_VERSION = "1.10"
     tags: true
