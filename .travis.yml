@@ -75,5 +75,5 @@ deploy:
   - $GOPATH/bin/confd-windows.exe
   skip_cleanup: true
   on:
-    condition: $TRAVIS_GO_VERSION = "1.10" 
+    condition: $TRAVIS_GO_VERSION = "1.x" 
     tags: true
