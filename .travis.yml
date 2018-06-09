@@ -1,7 +1,8 @@
 language: go
 go:
-  - 1.x
+  - '1.10'
   - tip
+go_import_path: github.com/kelseyhightower/confd
 env:
   - VAULT_ADDR='http://127.0.0.1:8200' CONSUL_VERSION=0.9.3 ETCD_VERSION=3.3.1 DYNAMODB_VERSION=2017-02-16 VAULT_VERSION=0.10.1 ZOOKEEPER_VERSION=3.4.10 RANCHER_VERSION=0.6.0
 services:
@@ -47,3 +48,32 @@ install:
 script:
   - make test
   - make integration
+before_deploy:
+  - |
+    for PLATFORM in windows linux darwin; do
+      EXTENSION=""
+      if [[ $PLATFORM = 'windows' ]]; then
+        EXTENSION=".exe"
+      fi
+      export GOOS=$PLATFORM
+      export GOARCH=amd64
+      export CGO_ENABLED=0
+
+      OUT_FILE="$GOPATH/bin/confd-$PLATFORM$EXTENSION"
+      echo "Creating $OUT_FILE ($TRAVIS_TAG)"
+      go build -ldflags "-X github.com/kelseyhightower/confd/main.Version=$TRAVIS_TAG" -o $OUT_FILE
+    done
+    ls -lrt $GOPATH/bin
+deploy:
+  provider: releases
+  # travis encrypt -r pastdev/confd <YOUR_API_KEY> --add deploy.api-key
+  api-key:
+    secure: ODPCQhHMrf57l5I/B5xmeGQdhQc51Csv9Ap9NZfZcquwELxN49wZenkA9KezJXLBn5/4SLbBkIooin5xgLF2xTSNtQlGcvWdE0dMBGOxJTTG/chqQqJORSrqIXXEwmry0Rr7tHyOCYwexdyhFtJWzutupU2KgY0nJJ++HeDHiauFuREPnqzxdo+fCbeOyXezbBJcPHwoJmT/Q5orFWJGqVZPr67+aG7Rp70o65PNOXiDuMPJaosOeKR/XI82AdA0mj+6bnNox4900cOlApJGP7NeC/vuRE10Wku9u5u8ZhbG4Cr9DZwLu8WjwMFsmOxh1ZKKh2p4owysTAk5KSdw2L+Q0N4O2GcKL/DGiTA7p4+e7MZITX3uTdJ1vYIuISdTxsNdFyy23LX/cJ4dHhUD/MbiEIbS5l9PhMa7kNUD3bpz+bTYxBRXt9xYelgOjE4Zp4yGSnUdpFJtRbQF0s88tQdF1gf3NfKs7VceCgBRW4sa5PYbtl38oz+1OxK1DB4Q5HsXjEHR+xrYuxLRFPWTms4M4SRds0wI/YlF1xhuLyy1sZ2SF8tqpNbn8j2UhY9NR8ztYl8twJpJKkrwsDqZ3AeKHD6FgcZFJ0kZsTeXgNNygD759nRxws5+ml6IwTjSn6SIIHZFiT7tz9iXOmTUiBXWvrtbCYHFJBF7V5QBJ7Q=
+  file:
+    - "$GOPATH/bin/confd-linux"
+    - "$GOPATH/bin/confd-darwin"
+    - "$GOPATH/bin/confd-windows.exe"
+  skip_cleanup: true
+  on:
+    condition: $TRAVIS_GO_VERSION = "1.10"
+    tags: true

@@ -186,6 +186,12 @@
   version = "v0.10.1"
 
 [[projects]]
+  name = "github.com/imdario/mergo"
+  packages = ["."]
+  revision = "9316a62528ac99aaecb4e47eadd6dc8aa6533d58"
+  version = "v0.3.5"
+
+[[projects]]
   name = "github.com/jmespath/go-jmespath"
   packages = ["."]
   revision = "0b12d6b5"
@@ -207,6 +213,15 @@
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
   revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
+
+[[projects]]
+  name = "github.com/pastdev/clconf"
+  packages = [
+    "clconf",
+    "clconf/template"
+  ]
+  revision = "d1ec6f4328e8421901105153a8b204566a324df2"
+  version = "v1.0.7"
 
 [[projects]]
   name = "github.com/ryanuber/go-glob"
@@ -236,6 +251,12 @@
   packages = ["codec"]
   revision = "b4c50a2b199d93b13dc15e78929cfb23bfdf21ab"
   version = "v1.1.1"
+
+[[projects]]
+  name = "github.com/urfave/cli"
+  packages = ["."]
+  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
+  version = "v1.20.0"
 
 [[projects]]
   branch = "master"
@@ -349,6 +370,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "1717a9e9edbc25ac6f76a8d2ba3d7378340e7d55ebb0002436cccec453f29a6b"
+  inputs-digest = "6eb17110d9aa1a766c84bbab1c0485e62987f7672f89c1d28c580295a5d04fea"
   solver-name = "gps-cdcl"
   solver-version = 1
