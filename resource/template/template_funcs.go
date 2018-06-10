@@ -1,6 +1,7 @@
 package template
 
 import (
+	"bytes"
 	"encoding/base64"
 	"encoding/json"
 	"errors"
@@ -51,6 +52,7 @@ func newFuncMap() map[string]interface{} {
 	m["mul"] = func(a, b int) int { return a * b }
 	m["seq"] = Seq
 	m["atoi"] = strconv.Atoi
+	m["escapeOsgi"] = EscapeOsgi
 	return m
 }
 
@@ -236,4 +238,19 @@ func Base64Encode(data string) string {
 func Base64Decode(data string) (string, error) {
 	s, err := base64.StdEncoding.DecodeString(data)
 	return string(s), err
+}
+
+func EscapeOsgi(data string) string {
+	// quotes, double quotes, backslash, the equals sign and spaces need to be escaped
+	var buffer bytes.Buffer
+	for _, runeValue := range data {
+		switch runeValue {
+		case 39, 34, 92, 61, 32:
+			buffer.WriteRune(92)
+			buffer.WriteRune(runeValue)
+		default:
+			buffer.WriteRune(runeValue)
+		}
+	}
+	return buffer.String()
 }
