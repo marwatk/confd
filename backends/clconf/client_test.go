@@ -161,7 +161,7 @@ func getValues(yamls []Yaml, keys ...string) (map[string]string, error) {
 
 	log.Info(fmt.Sprintf("yamlFile:[%s], yamlBase64:[%s], envYamlFile:[%s], envYamlBase64:[%s]",
 		yamlFile, yamlBase64, envYamlFile, envYamlBase64))
-	client, err := NewFileClient(yamlFile, yamlBase64)
+	client, err := NewClconfClient(yamlFile, yamlBase64)
 	if err != nil {
 		return nil, err
 	}
