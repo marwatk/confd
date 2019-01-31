@@ -57,9 +57,12 @@ func TestProcessTemplateResources(t *testing.T) {
 	}
 
 	tempDestDir, err := ioutil.TempDir("", "")
+	if err != nil {
+		t.Errorf("Failed to create temp dest dir: %s", err.Error())
+	}
 	destFilePath := filepath.Join(tempDestDir, "nonexistantfolder", "test.out")
 
-	defer os.Remove(destFilePath)
+	defer os.Remove(tempDestDir)
 
 	// Create the template resource configuration file.
 	templateResourcePath := filepath.Join(tempConfDir, "conf.d", "foo.toml")
