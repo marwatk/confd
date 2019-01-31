@@ -1,19 +1,29 @@
-package template
+package template_test
 
 import (
 	"testing"
+
+	"github.com/kelseyhightower/confd/resource/template"
 )
 
-func TestParseBool(t *testing.T) {
-	parseBool := newFuncMap()["parseBool"].(func(string) bool)
-
-	if !parseBool("true") {
-		t.Errorf("true is not true")
+func TestEscapeOsgi(t *testing.T) {
+	// quotes, double quotes, backslash, the equals sign and spaces need to be escaped
+	tests := [][]string{
+		[]string{"", ""},
+		[]string{"a", "a"},
+		[]string{"'", "\\'"},
+		[]string{"\"", "\\\""},
+		[]string{"\\", "\\\\"},
+		[]string{"=", "\\="},
+		[]string{" ", "\\ "},
+		[]string{
+			"a long 'sentence' using \"some\" of the = characters",
+			"a\\ long\\ \\'sentence\\'\\ using\\ \\\"some\\\"\\ of\\ the\\ \\=\\ characters",
+		},
 	}
-	if parseBool("false") {
-		t.Errorf("false is not false")
-	}
-	if parseBool("SOME UNKNOWN VALUE") {
-		t.Errorf("errors are not false")
+	for _, test := range tests {
+		if actual := template.EscapeOsgi(test[0]); actual != test[1] {
+			t.Errorf("EscapeOsgi failed: [%s] != [%s]", actual, test[1])
+		}
 	}
 }

@@ -25,15 +25,21 @@ nested:
 "@
 
 $secrets = @"
-database:
-  password: OVERRIDE_ME
-  username: confd
-prefix:
-  database:
-    password: OVERRIDE_ME
-    username: confd
-nested:
-  hip: hop
+{
+  "database": {
+    "password": "OVERRIDE_ME",
+    "username": "confd"
+  },
+  "prefix": {
+    "database": {
+      "password": "OVERRIDE_ME",
+      "username": "confd"
+    }
+  },
+  "nested": {
+    "hip": "hop"
+  }
+}
 "@
 
 $override1 = @"
@@ -47,10 +53,10 @@ prefix:
     password: p@sSw0rd
 "@
 
-New-Item -ItemType Directory -Path "$($tempDir)\clconf" -Force
-$configMapFile = "$tempDir\clconf\configMap.yaml"
+New-Item -ItemType Directory -Path "$($tempDir)\file" -Force
+$configMapFile = "$tempDir\file\configMap.yaml"
 $configMap > $configMapFile
-$secretsFile = "$tempDir\clconf\secrets.yaml"
+$secretsFile = "$tempDir\file\secrets.yaml"
 $secrets > $secretsFile
 $override1Base64 = [Convert]::ToBase64String(
     [System.Text.Encoding]::UTF8.GetBytes($override1))
@@ -67,5 +73,5 @@ confd --onetime `
     --confdir "$tempDir\confdir" `
     --backend clconf `
     --file "$configMapFile" `
-    --yamlBase64 $override1Base64 `
+    --file-base64 $override1Base64 `
     --watch

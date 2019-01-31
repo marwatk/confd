@@ -92,7 +92,8 @@ type YamlMeta struct {
 }
 
 func getValues(yamls []Yaml, keys ...string) (map[string]string, error) {
-	tempDir := os.TempDir()
+	tempDir := path.Join(os.TempDir(), "confd")
+	os.Mkdir(tempDir, 0700)
 	yamlMeta := make([]YamlMeta, len(yamls))
 
 	for i, yaml := range yamls {
@@ -117,7 +118,8 @@ func getValues(yamls []Yaml, keys ...string) (map[string]string, error) {
 		os.RemoveAll(tempDir)
 	}()
 
-	var yamlFile, yamlBase64, envYamlFile, envYamlBase64 string
+	var yamlFile, yamlBase64 []string
+	var envYamlFile, envYamlBase64 string
 	for _, meta := range yamlMeta {
 		if meta.yaml.env {
 			if meta.yaml.file {
@@ -140,19 +142,13 @@ func getValues(yamls []Yaml, keys ...string) (map[string]string, error) {
 			}
 		} else {
 			if meta.yaml.file {
-				if yamlFile != "" {
-					yamlFile += ","
-				}
-				yamlFile += meta.name
+				yamlFile = append(yamlFile, meta.name)
 				ioutil.WriteFile(
 					meta.name,
 					[]byte(meta.yaml.value), 0700)
 			} else {
-				if yamlBase64 != "" {
-					yamlBase64 += ","
-				}
-				yamlBase64 += base64.StdEncoding.EncodeToString(
-					[]byte(meta.yaml.value))
+				yamlBase64 = append(yamlBase64,
+					base64.StdEncoding.EncodeToString([]byte(meta.yaml.value)))
 			}
 		}
 	}

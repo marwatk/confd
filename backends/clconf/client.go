@@ -5,7 +5,7 @@ import (
 
 	"github.com/fsnotify/fsnotify"
 	"github.com/kelseyhightower/confd/log"
-	realclconf "gitlab.com/pastdev/s2i/clconf/clconf"
+	"github.com/pastdev/clconf/clconf"
 )
 
 // Client provides a shell for the yaml client
@@ -14,26 +14,19 @@ type Client struct {
 	yamlBase64Strings []string
 }
 
-func NewClconfClient(yamlFiles, yamlBase64Strings string) (*Client, error) {
-	var yamlFileArray, yamlBase64StringArray []string
-	if yamlFiles != "" {
-		yamlFileArray = realclconf.Splitter.Split(yamlFiles, -1)
-	}
-	if yamlBase64Strings != "" {
-		yamlBase64StringArray = realclconf.Splitter.Split(yamlBase64Strings, -1)
-	}
-	return &Client{yamlFileArray, yamlBase64StringArray}, nil
+func NewClconfClient(yamlFiles, yamlBase64Strings []string) (*Client, error) {
+	return &Client{yamlFiles, yamlBase64Strings}, nil
 }
 
 func (c *Client) GetValues(keys []string) (map[string]string, error) {
 	vars := make(map[string]string)
-	yamlMap, err := realclconf.LoadConfFromEnvironment(
+	yamlMap, err := clconf.LoadConfFromEnvironment(
 		c.yamlFiles, c.yamlBase64Strings)
 	if err != nil {
 		return vars, err
 	}
 
-	vars = realclconf.ToKvMap(yamlMap)
+	vars = clconf.ToKvMap(yamlMap)
 	log.Debug(fmt.Sprintf("Key Map: %#v", vars))
 
 	return vars, nil

@@ -24,15 +24,21 @@ nested:
 EOT
 
 cat <<EOT >> /tmp/confd-secrets.yaml
-database:
-  password: p@sSw0rd
-  username: confd
-prefix:
-  database:
-    password: p@sSw0rd
-    username: confd
-nested:
-  hip: hop
+{
+  "database": {
+    "password": "p@sSw0rd",
+    "username": "confd"
+  },
+  "prefix": {
+    "database": {
+      "password": "p@sSw0rd",
+      "username": "confd"
+    }
+  },
+  "nested": {
+    "hip": "hop"
+  }
+}
 EOT
 
 # Run confd
@@ -40,5 +46,6 @@ confd --onetime \
     --log-level debug \
     --confdir ./integration/confdir \
     --backend clconf \
-    --file "/tmp/confd-configMap.yaml,/tmp/confd-secrets.yaml" \
+    --file "/tmp/confd-configMap.yaml" \
+    --file "/tmp/confd-secrets.yaml" \
     --watch
