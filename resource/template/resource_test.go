@@ -56,12 +56,10 @@ func TestProcessTemplateResources(t *testing.T) {
 		t.Error(err.Error())
 	}
 
-	// Create the dest.
-	destFile, err := ioutil.TempFile("", "")
-	if err != nil {
-		t.Errorf("Failed to create destFile: %s", err.Error())
-	}
-	defer os.Remove(destFile.Name())
+	tempDestDir, err := ioutil.TempDir("", "")
+	destFilePath := filepath.Join(tempDestDir, "nonexistantfolder", "test.out")
+
+	defer os.Remove(destFilePath)
 
 	// Create the template resource configuration file.
 	templateResourcePath := filepath.Join(tempConfDir, "conf.d", "foo.toml")
@@ -75,7 +73,7 @@ func TestProcessTemplateResources(t *testing.T) {
 	}
 	data := make(map[string]string)
 	data["src"] = "foo.tmpl"
-	data["dest"] = destFile.Name()
+	data["dest"] = destFilePath
 	err = tmpl.Execute(templateResourceFile, data)
 	if err != nil {
 		t.Errorf(err.Error())
@@ -99,7 +97,7 @@ func TestProcessTemplateResources(t *testing.T) {
 	}
 	// Verify the results.
 	expected := "foo = bar"
-	results, err := ioutil.ReadFile(destFile.Name())
+	results, err := ioutil.ReadFile(destFilePath)
 	if err != nil {
 		t.Error(err.Error())
 	}

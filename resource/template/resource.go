@@ -210,8 +210,24 @@ func (t *TemplateResource) createStageFile() error {
 	}
 
 	destDir := filepath.Dir(t.Dest)
+	dirMode := t.FileMode
+
+	// add execute permissions for any scopes that have read permission for the folders to create
+	if dirMode&0400 > 0 {
+		dirMode |= 0100
+	}
+	if dirMode&0040 > 0 {
+		dirMode |= 0010
+	}
+	if dirMode&0004 > 0 {
+		dirMode |= 0001
+	}
+
 	// make sure the dir is exist
-	os.MkdirAll(destDir, t.FileMode)
+	err = os.MkdirAll(destDir, dirMode)
+	if err != nil {
+		return err
+	}
 
 	// create TempFile in Dest directory to avoid cross-filesystem issues
 	temp, err := ioutil.TempFile(destDir, "."+filepath.Base(t.Dest))
