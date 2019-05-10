@@ -220,8 +220,8 @@
     "clconf",
     "clconf/template"
   ]
-  revision = "d1ec6f4328e8421901105153a8b204566a324df2"
-  version = "v1.0.7"
+  revision = "e678e12274aaf178b8dd2c0cceb789838daa92ec"
+  version = "v1.0.14"
 
 [[projects]]
   name = "github.com/ryanuber/go-glob"
@@ -251,12 +251,6 @@
   packages = ["codec"]
   revision = "b4c50a2b199d93b13dc15e78929cfb23bfdf21ab"
   version = "v1.1.1"
-
-[[projects]]
-  name = "github.com/urfave/cli"
-  packages = ["."]
-  revision = "cfb38830724cc34fedffe9a2a29fb54fa9169cd1"
-  version = "v1.20.0"
 
 [[projects]]
   branch = "master"
@@ -362,14 +356,14 @@
   version = "v1.11.3"
 
 [[projects]]
+  branch = "v2"
   name = "gopkg.in/yaml.v2"
   packages = ["."]
-  revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
-  version = "v2.2.1"
+  revision = "7b8349ac747c6a24702b762d2c4fd9266cf4f1d6"
 
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "6eb17110d9aa1a766c84bbab1c0485e62987f7672f89c1d28c580295a5d04fea"
+  inputs-digest = "47ae632540bb1ebc4aa6fbc7e1cf80aafcf82cd2adbc72feb004968958ea60d2"
   solver-name = "gps-cdcl"
   solver-version = 1

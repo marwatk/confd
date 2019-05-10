@@ -10,6 +10,7 @@ import (
 	"os"
 	"reflect"
 	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/imdario/mergo"
@@ -281,24 +282,19 @@ func Walk(callback func(key []string, value interface{}), conf interface{}) {
 	walk(callback, node, []string{})
 }
 
-func walk(callback func(key []string, value interface{}), node map[interface{}]interface{}, keyStack []string) {
-	for k, v := range node {
-		keyStack := append(keyStack, k.(string))
-
-		switch v.(type) {
-		case map[interface{}]interface{}:
-			walk(callback, v.(map[interface{}]interface{}), keyStack)
-		case []interface{}:
-			for _, j := range v.([]interface{}) {
-				switch j.(type) {
-				case map[interface{}]interface{}:
-					walk(callback, j.(map[interface{}]interface{}), keyStack)
-				default:
-					callback(append(keyStack, fmt.Sprintf("%v", j)), "")
-				}
-			}
-		default:
-			callback(keyStack, v)
+func walk(callback func(key []string, value interface{}), node interface{}, keyStack []string) {
+	switch node.(type) {
+	case map[interface{}]interface{}:
+		for k, v := range node.(map[interface{}]interface{}) {
+			keyStack := append(keyStack, fmt.Sprintf("%v", k))
+			walk(callback, v, keyStack)
 		}
+	case []interface{}:
+		for i, j := range node.([]interface{}) {
+			keyStack := append(keyStack, strconv.Itoa(i))
+			walk(callback, j, keyStack)
+		}
+	default:
+		callback(keyStack, node)
 	}
 }

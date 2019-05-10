@@ -48,4 +48,4 @@
 
 [[constraint]]
   name = "github.com/pastdev/clconf"
-  version = "1.0.7"
+  version = "1.0.14"

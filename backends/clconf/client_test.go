@@ -184,20 +184,19 @@ func TestGetValues(t *testing.T) {
 	}
 }
 
-func TestGetValuesWithOverrides(t *testing.T) {
+func TestGetValuesList(t *testing.T) {
 	values, err := getValues(
 		[]Yaml{
-			Yaml{env: false, file: true, value: configMap},
-			Yaml{env: false, file: true, value: secrets},
-			Yaml{env: false, file: false, value: overrideValue1},
-			Yaml{env: false, file: false, value: overrideValue2},
+			Yaml{env: false, file: true, value: "list:\n- one\n- two"},
 		},
 		"/")
 	if err != nil {
 		t.Errorf("Failed to get values: %v", err)
 	}
-	if !reflect.DeepEqual(overrideExpected, values) {
-		t.Errorf("Failed get values: [%v] != [%v]", overrideExpected, values)
+
+	expected := map[string]string{"/list/0": "one", "/list/1": "two"}
+	if !reflect.DeepEqual(expected, values) {
+		t.Errorf("Failed get values: [%v] != [%v]", expected, values)
 	}
 }
 
@@ -253,5 +252,38 @@ func TestGetValuesMixed(t *testing.T) {
 
 	if !reflect.DeepEqual(overrideExpected, values) {
 		t.Errorf("Failed get values: [%v] != [%v]", overrideExpected, values)
+	}
+}
+
+func TestGetValuesWithOverrides(t *testing.T) {
+	values, err := getValues(
+		[]Yaml{
+			Yaml{env: false, file: true, value: configMap},
+			Yaml{env: false, file: true, value: secrets},
+			Yaml{env: false, file: false, value: overrideValue1},
+			Yaml{env: false, file: false, value: overrideValue2},
+		},
+		"/")
+	if err != nil {
+		t.Errorf("Failed to get values: %v", err)
+	}
+	if !reflect.DeepEqual(overrideExpected, values) {
+		t.Errorf("Failed get values: [%v] != [%v]", overrideExpected, values)
+	}
+}
+
+func TestGetValuesWithNumericKeys(t *testing.T) {
+	values, err := getValues(
+		[]Yaml{
+			Yaml{env: false, file: true, value: "1: one\n2: two"},
+		},
+		"/")
+	if err != nil {
+		t.Errorf("Failed to get values: %v", err)
+	}
+
+	expected := map[string]string{"/1": "one", "/2": "two"}
+	if !reflect.DeepEqual(expected, values) {
+		t.Errorf("Failed get values: [%v] != [%v]", expected, values)
 	}
 }
