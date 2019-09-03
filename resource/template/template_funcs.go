@@ -53,6 +53,7 @@ func newFuncMap() map[string]interface{} {
 	m["seq"] = Seq
 	m["atoi"] = strconv.Atoi
 	m["escapeOsgi"] = EscapeOsgi
+	m["fqdn"] = Fqdn
 	return m
 }
 
