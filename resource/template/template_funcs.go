@@ -259,8 +259,7 @@ func EscapeOsgi(data string) string {
 func Fqdn(hostname, domain string) string {
 	if strings.Contains(hostname, ".") {
 		return hostname
-	}
-	else {
+	} else {
 		return hostname + "." + domain
 	}
 }
